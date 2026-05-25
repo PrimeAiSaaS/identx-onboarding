@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PrimeAI — אפיון i.DENTX</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:#07080d;--surface:#0d0f17;--card:#12151f;--border:#1e2235;
+    --cyan:#00f2fe;--cyan-dim:rgba(0,242,254,.12);--cyan-glow:rgba(0,242,254,.35);
+    --orange:#ff7300;--text:#e8ecf4;--muted:#6b7492;
+    --mono:'Space Mono',monospace;--sans:'Heebo',sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,242,254,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,242,254,.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+  body::after{content:'';position:fixed;top:-20%;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(0,242,254,.06) 0%,transparent 70%);pointer-events:none;z-index:0}
+  .wrapper{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:48px 24px 80px}
+  .header{display:flex;align-items:center;gap:18px;margin-bottom:48px}
+  .logo-mark{flex-shrink:0;width:52px;height:52px;border:1.5px solid var(--cyan);border-radius:10px;display:grid;place-items:center;position:relative;overflow:hidden;box-shadow:0 0 20px var(--cyan-glow),inset 0 0 14px rgba(0,242,254,.08)}
+  .logo-mark svg{width:28px}
+  .logo-mark::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--cyan-dim),transparent)}
+  .brand{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--cyan);text-transform:uppercase;margin-bottom:4px}
+  .headline{font-size:22px;font-weight:700;line-height:1.25;color:var(--text)}
+  .headline span{color:var(--cyan)}
+  .progress-wrap{margin-bottom:40px}
+  .progress-labels{display:flex;justify-content:space-between;margin-bottom:10px}
+  .prog-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;transition:color .3s;display:flex;align-items:center;gap:8px}
+  .prog-label.active{color:var(--cyan)}
+  .prog-label .dot{width:7px;height:7px;border-radius:50%;background:var(--muted);transition:background .3s,box-shadow .3s}
+  .prog-label.active .dot{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+  .prog-bar-track{height:2px;background:var(--border);border-radius:2px;overflow:hidden}
+  .prog-bar-fill{height:100%;background:linear-gradient(90deg,var(--cyan),#4ff8ff);border-radius:2px;transition:width .55s cubic-bezier(.4,0,.2,1);box-shadow:0 0 12px var(--cyan-glow)}
+  .step{display:none}.step.active{display:block;animation:fadeSlide .4s ease}
+  @keyframes fadeSlide{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .step-heading{margin-bottom:32px}
+  .step-tag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--orange);text-transform:uppercase;margin-bottom:8px}
+  .step-title{font-size:20px;font-weight:700;color:var(--text)}
+  .step-sub{font-size:13px;color:var(--muted);margin-top:6px}
+  .q-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px 26px;margin-bottom:18px;transition:border-color .2s,box-shadow .2s}
+  .q-card:focus-within{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 4px 24px rgba(0,242,254,.08)}
+  .q-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+  .q-num{font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:.1em;flex-shrink:0;padding-top:3px}
+  .q-label{font-size:14.5px;font-weight:500;line-height:1.6;color:var(--text)}
+  .q-label em{font-style:normal;color:var(--orange);font-weight:600}
+  textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--sans);font-size:14px;padding:14px 16px;resize:vertical;min-height:110px;outline:none;transition:border-color .2s;direction:rtl}
+  textarea::placeholder{color:var(--muted);font-size:13px}
+  textarea:focus{border-color:var(--cyan)}
+  .nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:36px;gap:16px}
+  .btn{font-family:var(--sans);font-weight:600;font-size:14px;padding:13px 32px;border-radius:8px;border:none;cursor:pointer;transition:all .25s;letter-spacing:.03em;position:relative;overflow:hidden}
+  .btn-secondary{background:transparent;border:1px solid var(--border);color:var(--muted)}
+  .btn-secondary:hover{border-color:var(--cyan);color:var(--cyan)}
+  .btn-primary{background:var(--cyan);color:#07080d}
+  .btn-primary::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);transform:translateX(-100%);transition:transform .5s}
+  .btn-primary:hover::before{transform:translateX(100%)}
+  .btn-primary:hover{box-shadow:0 0 24px var(--cyan-glow)}
+  .btn-submit{background:linear-gradient(90deg,var(--orange),#ffb347);color:#07080d;flex:1}
+  .btn-submit:hover{box-shadow:0 0 24px rgba(255,115,0,.5)}
+  .success-overlay{position:fixed;inset:0;background:rgba(7,8,13,.92);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .4s}
+  .success-overlay.show{opacity:1;pointer-events:all}
+  .success-box{background:var(--card);border:1px solid var(--cyan);border-radius:20px;padding:52px 48px;text-align:center;max-width:440px;box-shadow:0 0 60px var(--cyan-glow);transform:scale(.9);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+  .success-overlay.show .success-box{transform:scale(1)}
+  .success-icon{width:64px;height:64px;margin:0 auto 24px;border-radius:50%;background:var(--cyan-dim);border:1.5px solid var(--cyan);display:grid;place-items:center;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 var(--cyan-glow)}50%{box-shadow:0 0 0 14px rgba(0,242,254,0)}}
+  .success-icon svg{color:var(--cyan)}
+  .success-title{font-size:22px;font-weight:700;margin-bottom:10px}
+  .success-title span{color:var(--cyan)}
+  .success-sub{font-size:14px;color:var(--muted);line-height:1.7}
+  .success-tag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--orange);text-transform:uppercase;margin-top:28px}
+  .scanline{position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.04) 0px,rgba(0,0,0,.04) 1px,transparent 1px,transparent 3px);pointer-events:none;z-index:0}
+  @media(max-width:560px){.wrapper{padding:32px 16px 64px}.headline{font-size:18px}.btn{padding:12px 20px}}
+</style>
+</head>
+<body>
+<div class="scanline"></div>
+<div class="wrapper">
+
+  <header class="header">
+    <div class="logo-mark">
+      <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="14,2 26,8 26,20 14,26 2,20 2,8" stroke="#00f2fe" stroke-width="1.5" fill="none"/>
+        <polygon points="14,7 21,11 21,17 14,21 7,17 7,11" fill="rgba(0,242,254,.15)" stroke="#00f2fe" stroke-width="1"/>
+        <circle cx="14" cy="14" r="2.5" fill="#00f2fe"/>
+      </svg>
+    </div>
+    <div class="header-text">
+      <div class="brand">PrimeAI — The Agentic Workflow Agency</div>
+      <div class="headline">אפיון מערכת <span>i.DENTX</span></div>
+    </div>
+  </header>
+
+  <div class="progress-wrap">
+    <div class="progress-labels">
+      <div class="prog-label active" id="pl-1"><span class="dot"></span> שלב 01 — ניהול תפעולי</div>
+      <div class="prog-label" id="pl-2"><span class="dot"></span> שלב 02 — קליניקה ומטופל</div>
+    </div>
+    <div class="prog-bar-track"><div class="prog-bar-fill" id="progBar" style="width:50%"></div></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step active" id="step1">
+    <div class="step-heading">
+      <div class="step-tag">// מיועד לוויקי — ניהול המרפאה</div>
+      <div class="step-title">תפעול וניהול המרפאה</div>
+      <div class="step-sub">6 שאלות על תהליכים, כלים ואתגרים יומיומיים</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header"><span class="q-num">01</span>
+        <label class="q-label" for="q1">מקורות הגעת לידים וזרימת עבודה <em>(Lead Flow)</em>: מאילו ערוצים מגיעים אליכם רוב המטופלים החדשים כיום? (לדוגמה: המלצות מפה לאוזן, שלט ברחוב, או פרסום ממומן בגוגל/פייסבוק/אינסטגרם?). בנוסף, תארי בקצרה מה קורה מהרגע שליד משאיר פרטים או פונה ועד שהוא נקבע ביומן?</label>
+      </div>
+      <textarea id="q1" placeholder="תארי את מקורות הלידים ואת התהליך שלב אחר שלב..."></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header"><span class="q-num">02</span>
+        <label class="q-label" for="q2">תקציבי פרסום ממומן <em>(במידה וקיים)</em>: האם אתם משקיעים כיום תקציב חודשי בפרסום ממומן דיגיטלי? אם כן, מהו סכום ההשקעה המשוער בחודש, והאם אתם עובדים עם חברת שיווק חיצונית? (אם לא מפרסמים כרגע, רשמו "לא מפרסמים").</label>
+      </div>
+      <textarea id="q2" placeholder="פרטי את תקציב הפרסום ושם חברת השיווק אם קיימת..." style="min-height:90px;"></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header"><span class="q-num">03</span>
+        <label class="q-label" for="q3">צווארי בקבוק מרכזיים <em>(Pain Points)</em>: באילו משימות המזכירות והצוות האדמיניסטרטיבי מבזבזים את רוב זמן העבודה שלהם? (לדוגמה: טלפונים חוזרים לאישור תורים, גביית חובות, הזנת נתונים ידנית, מענה על שאלות חוזרות).</label>
+      </div>
+      <textarea id="q3" placeholder="פרטי את הכאבים העיקריים..."></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header"><span class="q-num">04</span>
+        <label class="q-label" for="q4">מערכות ניהול וגודל בסיס הנתונים: אני יודע שאתם משתמשים כיום במערכת <em>Medform</em> – האם כל הניהול, היומן והתיקים הרפואיים מתנהלים דרכה, או שיש מערכות נוספות? ובנוסף, כמה מטופלים (פעילים ולא פעילים) רשומים אצלכם בסך הכל מאז הקמת המרפאה?</label>
+      </div>
+      <textarea id="q4" placeholder="תארי את המערכות + מספר מטופלים משוער..."></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header"><span class="q-num">05</span>
+        <label class="q-label" for="q5">חוקי היומן הנוקשים <em>(Scheduling Constraints)</em>: אילו חוקים בל יעברו יש לכם בקביעת התורים? (לדוגמה: לא קובעים יותר משני טיפולי שורש באותו היום / טיפולי עזרה ראשונה דחופים מקבלים עדיפות בין 12:00 ל-14:00).</label>
+      </div>
+      <textarea id="q5" placeholder="פרטי את המגבלות והחוקים הנוקשים..."></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header"><span class="q-num">06</span>
+        <label class="q-label" for="q6">אישורי הגעה, תוכניות פתוחות וביקורת: איך מתבצע כיום תהליך אישור התורים? בנוסף, כמה תוכניות טיפול (הצעות מחיר שניתנו) נשארות פתוחות בחודש מבלי שהמטופל סגר, ואיך אתם עוקבים ומזכירים למטופלים מהעבר לחזור לבדיקה תקופתית?</label>
+      </div>
+      <textarea id="q6" placeholder="תאר את תהליך האישורים, תוכניות פתוחות ומעקב ביקורת..."></textarea>
+    </div>
+
+    <div class="nav-row"><span></span><button class="btn btn-primary" onclick="goTo(2)">שלב הבא ←</button></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step" id="step2">
+    <div class="step-heading">
+      <div class="step-tag">// מיועד לד"ר פיראז — קליניקה ומטופל</div>
+      <div class="step-title">קליניקה וחווית מטופל</div>
+      <div class="step-sub">4 שאלות על פרופיל המטופל, חזון וצוואר הבקבוק המרכזי</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header"><span class="q-num">07</span>
+        <label class="q-label" for="q7">פרופיל המטופל המרכזי <em>(Patient Persona)</em>: מי הם פלחי האוכלוסייה העיקריים שמגיעים למרפאה? (לדוגמה: צעירים המחפשים טיפולים אסתטיים / מבוגרים להשתלות מורכבות / מטופלים הסובלים מחרדה דנטלית).</label>
+      </div>
+      <textarea id="q7" placeholder="תאר את קהל המטופלים העיקרי..."></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header"><span class="q-num">08</span>
+        <label class="q-label" for="q8">התנגדויות וחששות נפוצים <em>(Overcoming Objections)</em>: מהם 3 החששות או הפחדים הכי גדולים שמטופלים מעלים בדרך כלל לפני שהם מסכימים לסגור תוכנית טיפול? (למשל: פחד מכאב במהלך הטיפול, עלויות כספיות גבוהות, משך זמן ההחלמה).</label>
+      </div>
+      <textarea id="q8" placeholder="התנגדות 1, התנגדות 2, התנגדות 3..."></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header"><span class="q-num">09</span>
+        <label class="q-label" for="q9">מאגר שאלות ותשובות נפוצות <em>(Clinic FAQ)</em>: מהן השאלות שחוזרות על עצמן הכי הרבה בוואטסאפ או בטלפון לפני שמטופל מגיע? (למשל: סדרי חניה באזור, עבודה מול חברות ביטוח, הנחיות לאחר עקירה).</label>
+      </div>
+      <textarea id="q9" placeholder="שאלה 1 ✦ שאלה 2 ✦ שאלה 3..."></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header"><span class="q-num">10</span>
+        <label class="q-label" for="q10">שאלת הקריסה <em>(צוואר בקבוק מרכזי)</em>: אם מחר בבוקר קמפיין שיווקי מצליח בצורה קיצונית ו-500 מטופלים חדשים פונים לקליניקה בבת אחת – מה הדבר הראשון שייקלע לצוואר בקבוק, יישבר או ייעצר בתפעול ובעבודה שלכם? (למשל: המענה של המזכירות, הזמן של הדוקטור ביומן, תהליך הגבייה).</label>
+      </div>
+      <textarea id="q10" placeholder="תאר את נקודת השבירה הקריטית..."></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goTo(1)">→ חזרה לשלב 1</button>
+      <button class="btn btn-submit" id="submitBtn" onclick="submitForm()">🚀 שליחת אפיון ל-PrimeAI</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="success-overlay" id="successOverlay">
+  <div class="success-box">
+    <div class="success-icon"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,14 11,21 24,7"></polyline></svg></div>
+    <div class="success-title">האפיון נשלח בהצלחה <span>✦</span></div>
+    <div class="success-sub">תודה! המידע שסיפקת התקבל במערכת PrimeAI.<br/>צוות האוטומציה יעבד אותו ויחזור אליך בהקדם.</div>
+    <div class="success-tag">// i.DENTX · Powered by PrimeAI</div>
+  </div>
+</div>
+
+<script>
+  const WEBHOOK = "https://hook.eu1.make.com/goy2c2gt9tktk96mjzdv6k1uli4c5xmh";
+
+  function goTo(step) {
+    document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+    document.getElementById('step'+step).classList.add('active');
+    document.querySelectorAll('.prog-label').forEach(l=>l.classList.remove('active'));
+    document.getElementById('pl-'+step).classList.add('active');
+    document.getElementById('progBar').style.width=step===1?'50%':'100%';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  async function submitForm() {
+    const btn = document.getElementById('submitBtn');
+    btn.textContent='⏳ שולח...'; btn.disabled=true;
+    const payload = {
+      meta:{client:"i.DENTX",timestamp:new Date().toISOString(),source:"PrimeAI Onboarding Form"},
+      step1:{
+        lead_flow:                  document.getElementById('q1').value,
+        ad_budget:                  document.getElementById('q2').value,
+        pain_points:                document.getElementById('q3').value,
+        systems_and_db:             document.getElementById('q4').value,
+        scheduling_constraints:     document.getElementById('q5').value,
+        confirmations_and_followup: document.getElementById('q6').value
+      },
+      step2:{
+        patient_persona:  document.getElementById('q7').value,
+        objections:       document.getElementById('q8').value,
+        faq:              document.getElementById('q9').value,
+        bottleneck_crash: document.getElementById('q10').value
+      }
+    };
+    try {
+      await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    } catch(e){}
+    document.getElementById('successOverlay').classList.add('show');
+  }
+</script>
+</body>
+</html>
