@@ -1,57 +1,188 @@
-<!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PrimeAI — אפיון i.DENTX</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-<style>
-  :root {
-    --bg:#07080d;--surface:#0d0f17;--card:#12151f;--border:#1e2235;
-    --cyan:#00f2fe;--cyan-dim:rgba(0,242,254,.12);--cyan-glow:rgba(0,242,254,.35);
-    --orange:#ff7300;--text:#e8ecf4;--muted:#6b7492;
-    --mono:'Space Mono',monospace;--sans:'Heebo',sans-serif;
+import React, { useState } from 'react';
+
+export default function EgoQuestionnaire() {
+  const [formData, setFormData] = useState({
+    clinicAndDoctorName: '',
+    patientVolume: '',
+    bottlenecks: [],
+    readyForTech: '',
+    whatsappNumber: ''
+  });
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleCheckboxChange = (value) => {
+    if (formData.bottlenecks.includes(value)) {
+      setFormData({
+        ...formData,
+        bottlenecks: formData.bottlenecks.filter((item) => item !== value)
+      });
+    } else {
+      setFormData({
+        ...formData,
+        bottlenecks: [...formData.bottlenecks, value]
+      });
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // כאן יבוא החיבור שלך לסופאבייס / n8n Webhook / Make Webhook
+    console.log('Sending data to PrimeAI Engine:', formData);
+    setIsSubmitted(true);
+  };
+
+  if (isSubmitted) {
+    return (
+      <div className="max-w-xl mx-auto my-12 p-8 bg-zinc-950 border border-zinc-8xl rounded-2xl shadow-2xl text-right" dir="rtl">
+        <div className="flex flex-col items-center justify-center space-y-6 py-8">
+          <div className="w-16 h-16 bg-amber-500/10 border border-amber-500/30 rounded-full flex items-center justify-center animate-pulse">
+            <span className="text-2xl text-amber-500">🧠</span>
+          </div>
+          <h2 className="text-2xl font-black text-white tracking-tight">הנתונים התקבלו בהצלחה והועברו לניתוח המערכת</h2>
+          <p className="text-zinc-400 text-base leading-relaxed text-center max-w-md">
+            אנחנו בוחנים כעת את נפח הפעילות ואת התאמת המרפאה לתשתית שלנו. תשובה סופית (לחיוב או לשלילה) תישלח למספר הוואטסאפ שהזנת בטווח של <span className="text-amber-400 font-bold">45 הדקות הקרובות</span>.
+          </p>
+        </div>
+      </div>
+    );
   }
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden}
-  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,242,254,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,242,254,.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-  body::after{content:'';position:fixed;top:-20%;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(0,242,254,.06) 0%,transparent 70%);pointer-events:none;z-index:0}
-  .wrapper{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:48px 24px 80px}
-  .header{display:flex;align-items:center;gap:18px;margin-bottom:48px}
-  .logo-mark{flex-shrink:0;width:52px;height:52px;border:1.5px solid var(--cyan);border-radius:10px;display:grid;place-items:center;position:relative;overflow:hidden;box-shadow:0 0 20px var(--cyan-glow),inset 0 0 14px rgba(0,242,254,.08)}
-  .logo-mark svg{width:28px}
-  .logo-mark::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--cyan-dim),transparent)}
-  .brand{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--cyan);text-transform:uppercase;margin-bottom:4px}
-  .headline{font-size:22px;font-weight:700;line-height:1.25;color:var(--text)}
-  .headline span{color:var(--cyan)}
-  .progress-wrap{margin-bottom:40px}
-  .progress-labels{display:flex;justify-content:space-between;margin-bottom:10px}
-  .prog-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;transition:color .3s;display:flex;align-items:center;gap:8px}
-  .prog-label.active{color:var(--cyan)}
-  .prog-label .dot{width:7px;height:7px;border-radius:50%;background:var(--muted);transition:background .3s,box-shadow .3s}
-  .prog-label.active .dot{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
-  .prog-bar-track{height:2px;background:var(--border);border-radius:2px;overflow:hidden}
-  .prog-bar-fill{height:100%;background:linear-gradient(90deg,var(--cyan),#4ff8ff);border-radius:2px;transition:width .55s cubic-bezier(.4,0,.2,1);box-shadow:0 0 12px var(--cyan-glow)}
-  .step{display:none}.step.active{display:block;animation:fadeSlide .4s ease}
-  @keyframes fadeSlide{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-  .step-heading{margin-bottom:32px}
-  .step-tag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--orange);text-transform:uppercase;margin-bottom:8px}
-  .step-title{font-size:20px;font-weight:700;color:var(--text)}
-  .step-sub{font-size:13px;color:var(--muted);margin-top:6px}
-  .q-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px 26px;margin-bottom:18px;transition:border-color .2s,box-shadow .2s}
-  .q-card:focus-within{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 4px 24px rgba(0,242,254,.08)}
-  .q-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
-  .q-num{font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:.1em;flex-shrink:0;padding-top:3px}
-  .q-label{font-size:14.5px;font-weight:500;line-height:1.6;color:var(--text)}
-  .q-label em{font-style:normal;color:var(--orange);font-weight:600}
-  textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--sans);font-size:14px;padding:14px 16px;resize:vertical;min-height:110px;outline:none;transition:border-color .2s;direction:rtl}
-  textarea::placeholder{color:var(--muted);font-size:13px}
-  textarea:focus{border-color:var(--cyan)}
-  .nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:36px;gap:16px}
-  .btn{font-family:var(--sans);font-weight:600;font-size:14px;padding:13px 32px;border-radius:8px;border:none;cursor:pointer;transition:all .25s;letter-spacing:.03em;position:relative;overflow:hidden}
-  .btn-secondary{background:transparent;border:1px solid var(--border);color:var(--muted)}
-  .btn-secondary:hover{border-color:var(--cyan);color:var(--cyan)}
-  .btn-primary{background:var(--cyan);color:#07080d}
+
+  return (
+    <div className="max-w-2xl mx-auto my-12 p-8 bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl text-right" dir="rtl">
+      {/* כותרת ופתיח */}
+      <div className="border-b border-zinc-800 pb-6 mb-8">
+        <div className="inline-block bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-wider">
+          סיווג אקסקלוסיבי
+        </div>
+        <h1 className="text-2xl font-black text-white sm:text-3xl tracking-tight mb-4">
+          בדיקת התאמה להטמעת אוטומציית יומנים מבוססת AI <span className="text-amber-500 font-medium text-lg block sm:inline">(מחזור יוני 2026)</span>
+        </h1>
+        <p className="text-zinc-400 text-sm leading-relaxed">
+          ברוכים הבאים. המערכת של <span className="text-white font-semibold">PrimeAI</span> נועדה לייצר שקט תעשייתי לצוות הקבלה ולחסל כמעט לחלוטין את תופעת ה"חורים ביומן" וביטולי הרגע האחרון. מכיוון שאנחנו מלווים רק 2 מרפאות חדשות בכל חודש כדי להבטיח איכות תשתית מקסימלית, השאלון הקצר הזה נועד לבדוק האם נפח הפעילות שלכם מצדיק את הטמעת המערכת שלנו. התהליך לוקח פחות מדקה.
+        </p>
+      </div>
+
+      {/* טופס השאלון */}
+      <form onSubmit={handleSubmit} className="space-y-8">
+        
+        {/* שאלה 1 */}
+        <div className="space-y-2">
+          <label className="block text-sm font-bold text-zinc-200">
+            1. מה שם המרפאה ושם מנהל המרפאה/הרופא הראשי? <span className="text-amber-500">*</span>
+          </label>
+          <input
+            type="text"
+            required
+            className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-amber-500 transition-colors"
+            placeholder="לדוגמה: מרפאת דנטל - ד''ר ישראל ישראלי"
+            value={formData.clinicAndDoctorName}
+            onChange={(e) => setFormData({ ...formData, clinicAndDoctorName: e.target.value })}
+          />
+        </div>
+
+        {/* שאלה 2 */}
+        <div className="space-y-3">
+          <label className="block text-sm font-bold text-zinc-200">
+            2. מהו נפח המטופלים החודשי המשוער של המרפאה כיום? <span className="text-amber-500">*</span>
+          </label>
+          <div className="grid grid-cols-1 gap-3">
+            {[
+              { id: 'low', label: 'מתחת ל-100 מטופלים בחודש (מרפאה בשלבי בנייה)' },
+              { id: 'medium', label: '100 עד 300 מטופלים (מרפאה פעילה ויציבה)' },
+              { id: 'high', label: '300+ מטופלים בחודש (מרפאה בעומס גבוה / מרובת כורסאות)' }
+            ].map((option) => (
+              <label key={option.id} className={`flex items-center gap-3 p-4 bg-zinc-900/50 border rounded-xl cursor-pointer transition-all ${formData.patientVolume === option.id ? 'border-amber-500 bg-amber-500/5 text-white' : 'border-zinc-800 text-zinc-400 hover:border-zinc-700'}`}>
+                <input
+                  type="radio"
+                  name="patientVolume"
+                  required
+                  className="accent-amber-500 h-4 w-4"
+                  checked={formData.patientVolume === option.id}
+                  onChange={() => setFormData({ ...formData, patientVolume: option.id })}
+                />
+                <span className="text-sm font-medium">{option.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* שאלה 3 */}
+        <div className="space-y-3">
+          <label className="block text-sm font-bold text-zinc-200">
+            3. מהו צוואר הבקבוק המרכזי שלכם כיום בניהול התורים? <span className="text-zinc-500 font-normal">(ניתן לסמן מספר תשובות)</span>
+          </label>
+          <div className="grid grid-cols-1 gap-3">
+            {[
+              { id: 'b1', label: 'עומס הודעות בוואטסאפ ופספוס של לידים פוטנציאליים.' },
+              { id: 'b2', label: 'ביטולים של הרגע האחרון או מטופלים ששוכחים להגיע (No-shows).' },
+              { id: 'b3', label: 'זמן יקר של המזכירות שמתבזבז על "פינג-פונג" טלפוני לקביעת תורים במקום על גבייה ושירות לקוחות במרפאה.' },
+              { id: 'b4', label: 'חוסר סנכרון בין יומנים/סניפים.' }
+            ].map((box) => (
+              <label key={box.id} className={`flex items-start gap-3 p-4 bg-zinc-900/50 border rounded-xl cursor-pointer transition-all ${formData.bottlenecks.includes(box.id) ? 'border-amber-500 bg-amber-500/5 text-white' : 'border-zinc-800 text-zinc-400 hover:border-zinc-700'}`}>
+                <input
+                  type="checkbox"
+                  className="accent-amber-500 h-4 w-4 mt-0.5"
+                  checked={formData.bottlenecks.includes(box.id)}
+                  onChange={() => handleCheckboxChange(box.id)}
+                />
+                <span className="text-sm font-medium leading-tight">{box.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* שאלה 4 */}
+        <div className="space-y-3">
+          <label className="block text-sm font-bold text-zinc-200">
+            4. במידה ותימצא התאמה, האם המרפאה ערוכה לקבלת החלטות ולהטמעת טכנולוגיה חדשה (שלא דורשת מאמץ מהצוות) במהלך השבועיים הקרובים? <span className="text-amber-500">*</span>
+          </label>
+          <div className="grid grid-cols-1 gap-3">
+            {[
+              { id: 'yes', label: 'כן, אנחנו מחפשים פתרון טכנולוגי לייעול העסק בהקדם.' },
+              { id: 'no', label: 'לא, כרגע אנחנו מעדיפים להישאר עם שיטת העבודה הידנית.' }
+            ].map((option) => (
+              <label key={option.id} className={`flex items-center gap-3 p-4 bg-zinc-900/50 border rounded-xl cursor-pointer transition-all ${formData.readyForTech === option.id ? 'border-amber-500 bg-amber-500/5 text-white' : 'border-zinc-800 text-zinc-400 hover:border-zinc-700'}`}>
+                <input
+                  type="radio"
+                  name="readyForTech"
+                  required
+                  className="accent-amber-500 h-4 w-4"
+                  checked={formData.readyForTech === option.id}
+                  onChange={() => setFormData({ ...formData, readyForTech: option.id })}
+                />
+                <span className="text-sm font-medium">{option.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* שאלה 5 */}
+        <div className="space-y-2">
+          <label className="block text-sm font-bold text-zinc-200">
+            5. מהו מספר הטלפון (וואטסאפ) הישיר שאליו נשלח את תוצאות הבדיקה ואת סרטון הדמו הסודי במידה ותעברו את הסינון? <span className="text-amber-500">*</span>
+          </label>
+          <input
+            type="tel"
+            required
+            className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-left text-white placeholder-zinc-600 focus:outline-none focus:border-amber-500 transition-colors"
+            placeholder="05X-XXXXXXX"
+            dir="ltr"
+            value={formData.whatsappNumber}
+            onChange={(e) => setFormData({ ...formData, whatsappNumber: e.target.value })}
+          />
+        </div>
+
+        {/* כפתור הגשה */}
+        <button
+          type="submit"
+          className="w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-black text-base py-4 rounded-xl shadow-lg hover:shadow-amber-500/10 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+        >
+          שלח לבדיקת התאמה במערכת
+        </button>
+      </form>
+    </div>
+  );
+}
   .btn-primary::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);transform:translateX(-100%);transition:transform .5s}
   .btn-primary:hover::before{transform:translateX(100%)}
   .btn-primary:hover{box-shadow:0 0 24px var(--cyan-glow)}
